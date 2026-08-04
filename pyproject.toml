@@ -1,2 +1,16 @@
+[project]
+name = "astrology-ai-backend"
+version = "0.1.0"
+description = "Backend for Astrology AI"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "openai",
+    "pydantic",
+    "python-dotenv",
+    "sqlalchemy"
+]
+
 [tool.vercel]
 entrypoint = "backend.main:app"
