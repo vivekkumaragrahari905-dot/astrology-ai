@@ -9,7 +9,8 @@ from datetime import datetime
 import os
 
 # ========== DATABASE SETUP (Inline for Vercel) ==========
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./astrology.db")
+default_db_path = "/tmp/astrology.db" if os.getenv("VERCEL") else "./astrology.db"
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{default_db_path}")
 
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
