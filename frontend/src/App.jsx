@@ -501,14 +501,19 @@ function App() {
               
               <form className="space-y-4" onSubmit={handleAuthSubmit}>
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-on-surface-variant">Phone Number</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant">Phone Number (10 digits)</label>
                   <input 
                     type="tel" 
                     className="w-full bg-saffron-canvas/10 border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 smooth-transition" 
                     required 
-                    placeholder="+91 98765 43210"
+                    maxLength="10"
+                    pattern="\d{10}"
+                    placeholder="9876543210"
                     value={authPhone}
-                    onChange={(e) => setAuthPhone(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      setAuthPhone(val);
+                    }}
                   />
                 </div>
                 <button type="submit" className="w-full bg-primary hover:bg-primary-container text-white py-3 rounded-full text-sm font-bold shadow-md smooth-transition active:scale-95 mt-2" disabled={isAuthLoading}>
