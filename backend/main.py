@@ -350,5 +350,9 @@ def chat_endpoint(request: ChatRequestDB, db: Session = Depends(get_db)):
 def health_check():
     return {"status": "healthy", "service": "Swastik AI Backend"}
 
+@app.get("/")
+def root():
+    return {"message": "Swastik AI Backend is running successfully! Please use the frontend URL to access the website."}
+
 # Vercel handler
 handler = app
