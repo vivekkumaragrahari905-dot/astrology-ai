@@ -1,0 +1,147 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕉️</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Swastik AI - Premium Vedic Guidance. Get personalized daily transits, horoscope insights, Lagna chart calculations, Panchang Muhurtas, and consult our AI Vedic Astrologer." />
+    <title>Swastik AI — Premium Vedic Guidance</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "surface-container-high": "#e1e8fd",
+              "surface-tint": "#a73a00",
+              "secondary-fixed": "#f9d8ff",
+              "surface-container-highest": "#dce2f7",
+              "on-surface-variant": "#5a4138",
+              "on-secondary-fixed-variant": "#6e1f8d",
+              "background": "#f9f9ff",
+              "on-surface": "#141b2b",
+              "on-tertiary-fixed-variant": "#783200",
+              "outline": "#8e7166",
+              "secondary-container": "#e18dff",
+              "surface-dim": "#d3daef",
+              "on-primary-container": "#fffbff",
+              "on-primary-fixed": "#370e00",
+              "surface-container-low": "#f1f3ff",
+              "on-secondary-fixed": "#320046",
+              "tertiary-fixed": "#ffdbca",
+              "tertiary": "#994100",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "cosmic-dust": "#9CA3AF",
+              "inverse-surface": "#293040",
+              "outline-variant": "#e2bfb2",
+              "primary-fixed": "#ffdbce",
+              "tertiary-container": "#c05400",
+              "primary-fixed-dim": "#ffb599",
+              "primary": "#a33900",
+              "on-primary": "#ffffff",
+              "saffron-canvas": "#FDF8F2",
+              "surface-bright": "#f9f9ff",
+              "divine-purple-light": "#F5E6FB",
+              "tertiary-fixed-dim": "#ffb690",
+              "secondary-fixed-dim": "#edb1ff",
+              "surface-variant": "#dce2f7",
+              "surface": "#f9f9ff",
+              "error-container": "#ffdad6",
+              "on-secondary-container": "#681787",
+              "inverse-on-surface": "#edf0ff",
+              "on-error-container": "#93000a",
+              "surface-container": "#e9edff",
+              "on-tertiary-fixed": "#341100",
+              "on-background": "#141b2b",
+              "primary-container": "#cc4900",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#fffbff",
+              "secondary": "#893ba7",
+              "on-primary-fixed-variant": "#7f2b00",
+              "inverse-primary": "#ffb599",
+              "error": "#ba1a1a"
+            },
+            "borderRadius": {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+            "spacing": {
+              "gutter": "24px",
+              "margin-mobile": "16px",
+              "stack-md": "24px",
+              "base": "8px",
+              "container-max": "1200px",
+              "stack-sm": "12px",
+              "stack-lg": "48px",
+              "margin-desktop": "40px"
+            },
+            "fontFamily": {
+              "headline-lg-mobile": ["Noto Serif"],
+              "label-md": ["Manrope"],
+              "headline-lg": ["Noto Serif"],
+              "body-sm": ["Manrope"],
+              "headline-xl": ["Noto Serif"],
+              "label-caps": ["Manrope"],
+              "body-md": ["Manrope"]
+            },
+            "fontSize": {
+              "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+              "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+              "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+              "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+              "headline-xl": ["40px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+              "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+              "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .glass-card {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(163, 57, 0, 0.05);
+      }
+      .ai-glow {
+        box-shadow: 0 0 20px rgba(137, 59, 167, 0.15);
+      }
+      .saffron-gradient {
+        background: linear-gradient(135deg, #a33900 0%, #cc4900 100%);
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      .zodiac-wheel-active {
+        animation: rotateWheel 60s linear infinite;
+      }
+      @keyframes rotateWheel {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+  </head>
+  <body class="bg-saffron-canvas text-on-surface font-body-md min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
