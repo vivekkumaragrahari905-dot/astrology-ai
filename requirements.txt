@@ -1,10 +1,6 @@
-# Requirements for Qwen2.5 QLoRA Fine-tuning
-torch>=2.1.0
-transformers>=4.38.0
-peft>=0.9.0
-trl>=0.8.1
-accelerate>=0.27.0
-bitsandbytes>=0.42.0
-datasets>=2.17.0
-sentencepiece
-protobuf
+fastapi
+uvicorn
+openai
+pydantic
+python-dotenv
+sqlalchemy
