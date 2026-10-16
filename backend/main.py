@@ -50,6 +50,18 @@ class ChatMessage(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
     user = relationship("User", back_populates="chats")
 
+class Order(Base):
+    __tablename__ = "orders"
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(String, unique=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    customer_name = Column(String)
+    report_title = Column(String)
+    amount = Column(String)
+    payment_method = Column(String, default="Card")
+    status = Column(String, default="SUCCESS")
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
 # ========== SCHEMAS ==========
 class UserBase(BaseModel):
     name: str
@@ -78,6 +90,27 @@ class ChatMessageResponse(BaseModel):
 class ChatRequestDB(BaseModel):
     user_id: int
     message: str
+
+class OrderCreate(BaseModel):
+    user_id: Optional[int] = None
+    customer_name: str
+    report_title: str
+    amount: str
+    payment_method: Optional[str] = "Card (Ending 4444)"
+    status: Optional[str] = "SUCCESS"
+
+class OrderResponse(BaseModel):
+    id: int
+    order_id: str
+    user_id: Optional[int] = None
+    customer_name: str
+    report_title: str
+    amount: str
+    payment_method: str
+    status: str
+    timestamp: datetime
+    class Config:
+        from_attributes = True
 
 # ========== CREATE TABLES ==========
 Base.metadata.create_all(bind=engine)
@@ -354,5 +387,148 @@ def health_check():
 def root():
     return {"message": "Swastik AI Backend is running successfully! Please use the frontend URL to access the website."}
 
+# ========== ADMIN PANEL ROUTES ==========
+class AdminTestQueryRequest(BaseModel):
+    message: str
+    user_context: Optional[str] = "User Context: Name=Admin Seeker, DOB=1995-08-11, Time=12:15, Place=Varanasi, India, Gender=Male"
+
+@app.get("/api/admin/stats")
+def get_admin_stats(db: Session = Depends(get_db)):
+    total_users = db.query(User).count()
+    total_messages = db.query(ChatMessage).count()
+    user_messages = db.query(ChatMessage).filter(ChatMessage.role == "user").count()
+    ai_messages = db.query(ChatMessage).filter(ChatMessage.role == "assistant").count()
+    total_orders = db.query(Order).count()
+    all_orders = db.query(Order).all()
+    total_revenue = sum([int(''.join(filter(str.isdigit, o.amount)) or 0) for o in all_orders])
+    vllm_url = os.getenv("VLLM_BASE_URL", "")
+    model_id = os.getenv("MODEL_ID", "Qwen/Qwen2.5-7B-Instruct")
+    
+    return {
+        "total_users": total_users,
+        "total_messages": total_messages,
+        "user_queries": user_messages,
+        "ai_responses": ai_messages,
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "engine_mode": "vLLM Production" if vllm_url else "Vedic AI Inference Engine",
+        "vllm_url": vllm_url if vllm_url else "Standalone Vedic Knowledge Engine",
+        "model_id": model_id,
+        "database": "SQLite Local",
+        "status": "Online"
+    }
+
+@app.post("/api/orders", response_model=OrderResponse)
+def create_order(order: OrderCreate, db: Session = Depends(get_db)):
+    import random
+    import time
+    ord_id = f"SWK-{int(time.time())}-{random.randint(100, 999)}"
+    db_order = Order(
+        order_id=ord_id,
+        user_id=order.user_id,
+        customer_name=order.customer_name,
+        report_title=order.report_title,
+        amount=order.amount,
+        payment_method=order.payment_method,
+        status=order.status or "SUCCESS"
+    )
+    db.add(db_order)
+    db.commit()
+    db.refresh(db_order)
+    return db_order
+
+@app.get("/api/admin/orders")
+def get_admin_orders(db: Session = Depends(get_db)):
+    orders = db.query(Order).order_by(Order.id.desc()).all()
+    return [
+        {
+            "id": o.id,
+            "order_id": o.order_id,
+            "user_id": o.user_id,
+            "customer_name": o.customer_name,
+            "report_title": o.report_title,
+            "amount": o.amount,
+            "payment_method": o.payment_method,
+            "status": o.status,
+            "timestamp": o.timestamp.isoformat() if o.timestamp else None
+        }
+        for o in orders
+    ]
+
+@app.get("/api/admin/users")
+def get_admin_users(db: Session = Depends(get_db)):
+    users = db.query(User).order_by(User.id.desc()).all()
+    result = []
+    for u in users:
+        chat_count = db.query(ChatMessage).filter(ChatMessage.user_id == u.id).count()
+        result.append({
+            "id": u.id,
+            "name": u.name,
+            "dob": u.dob,
+            "tob": u.tob,
+            "pob": u.pob,
+            "gender": u.gender,
+            "chat_count": chat_count
+        })
+    return result
+
+@app.get("/api/admin/chats")
+def get_admin_chats(limit: int = 100, db: Session = Depends(get_db)):
+    chats = db.query(ChatMessage).order_by(ChatMessage.id.desc()).limit(limit).all()
+    users_dict = {u.id: u.name for u in db.query(User).all()}
+    return [
+        {
+            "id": c.id,
+            "user_id": c.user_id,
+            "user_name": users_dict.get(c.user_id, f"Seeker #{c.user_id}"),
+            "role": c.role,
+            "content": c.content,
+            "timestamp": c.timestamp.isoformat() if c.timestamp else None
+        }
+        for c in chats
+    ]
+
+@app.delete("/api/admin/users/{user_id}")
+def delete_admin_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.query(ChatMessage).filter(ChatMessage.user_id == user_id).delete()
+    db.delete(user)
+    db.commit()
+    return {"success": True, "message": f"User {user_id} and related chats deleted"}
+
+@app.delete("/api/admin/chats/{chat_id}")
+def delete_admin_chat(chat_id: int, db: Session = Depends(get_db)):
+    chat = db.query(ChatMessage).filter(ChatMessage.id == chat_id).first()
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat message not found")
+    db.delete(chat)
+    db.commit()
+    return {"success": True, "message": f"Chat message {chat_id} deleted"}
+
+@app.get("/api/admin/engine")
+def get_admin_engine():
+    return {
+        "system_prompt": SYSTEM_PROMPT,
+        "vllm_base_url": os.getenv("VLLM_BASE_URL", ""),
+        "model_id": os.getenv("MODEL_ID", "Qwen/Qwen2.5-7B-Instruct"),
+        "active_engine": "vLLM Server" if os.getenv("VLLM_BASE_URL") else "Vedic Rule & Archetype Engine"
+    }
+
+@app.post("/api/admin/test-query")
+def test_admin_query(req: AdminTestQueryRequest):
+    import time
+    start = time.time()
+    resp = generate_vedic_response(req.message, req.user_context)
+    duration_ms = round((time.time() - start) * 1000, 2)
+    return {
+        "query": req.message,
+        "response": resp,
+        "engine": "Vedic Knowledge Engine",
+        "duration_ms": duration_ms
+    }
+
 # Vercel handler
 handler = app
+

@@ -15,6 +15,7 @@ import {
   Activity, 
   TrendingUp, 
   ShieldAlert, 
+  Shield,
   Award, 
   CheckCircle,
   HelpCircle,
@@ -28,6 +29,7 @@ import {
   ChevronRight,
   Plus
 } from 'lucide-react';
+import AdminPanel from './AdminPanel';
 
 // Custom Swastik SVG Icon component
 const SwastikIcon = ({ className = "w-5 h-5", size = 20 }) => (
@@ -574,7 +576,8 @@ function App() {
               { id: 'kundli', label: 'Kundli', icon: 'auto_awesome' },
               { id: 'chat', label: 'AI Chat', icon: 'chat' },
               { id: 'reports', label: 'Reports', icon: 'description' },
-              { id: 'panchang', label: 'Panchang', icon: 'wb_sunny' }
+              { id: 'panchang', label: 'Panchang', icon: 'wb_sunny' },
+              { id: 'admin', label: 'Admin', icon: 'shield' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -592,8 +595,22 @@ function App() {
           </nav>
           
           {/* Header Right Badges */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             
+            {/* Admin Console Access Button */}
+            <button
+              onClick={() => setActiveTab('admin')}
+              className={`border text-[10px] font-bold rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm smooth-transition active:scale-95 ${
+                activeTab === 'admin'
+                  ? 'bg-amber-600 border-amber-600 text-white shadow-md'
+                  : 'bg-amber-500/10 border-amber-500/30 text-amber-800 hover:bg-amber-500/20'
+              }`}
+              title="Open Admin Console"
+            >
+              <Shield size={12} className={activeTab === 'admin' ? 'text-white' : 'text-amber-700'} />
+              <span>Admin Panel</span>
+            </button>
+
             {/* Karma points badge */}
             <div className="bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold rounded-full px-3 py-1 flex items-center gap-1.5 shadow-sm smooth-transition hover:bg-primary/20 cursor-pointer" onClick={() => setActiveTab('panchang')}>
               <Sun size={12} className="fill-current animate-spin" style={{ animationDuration: '15s' }} />
@@ -627,7 +644,12 @@ function App() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left/Main Column */}
-          <div className={`space-y-6 ${activeTab === 'chat' ? 'lg:col-span-12 xl:col-span-12' : 'lg:col-span-8 xl:col-span-9'}`}>
+          <div className={`space-y-6 ${activeTab === 'chat' || activeTab === 'admin' ? 'lg:col-span-12 xl:col-span-12' : 'lg:col-span-8 xl:col-span-9'}`}>
+
+            {/* ADMIN PANEL TAB */}
+            {activeTab === 'admin' && (
+              <AdminPanel onExit={() => setActiveTab('dashboard')} />
+            )}
 
             {/* 1. PERSONALIZED DASHBOARD TAB */}
             {activeTab === 'dashboard' && (
@@ -1914,7 +1936,7 @@ function App() {
           </div>
 
           {/* Right Column: Persistent Sidebar (Desktop only) */}
-          <aside className={`hidden lg:block space-y-6 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar pr-2 ${activeTab === 'chat' ? '!hidden' : 'lg:col-span-4 xl:col-span-3'}`}>
+          <aside className={`hidden lg:block space-y-6 sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar pr-2 ${activeTab === 'chat' || activeTab === 'admin' ? '!hidden' : 'lg:col-span-4 xl:col-span-3'}`}>
             
             {/* FREE SERVICES vertical menu (Astro Devam layout inspiration) */}
             <div className="bg-white rounded-3xl p-5 border border-outline-variant/30 shadow-sm">
@@ -2255,6 +2277,16 @@ function App() {
         >
           <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: activeTab === 'panchang' ? "'FILL' 1" : "" }}>wb_sunny</span>
           <span className="font-label-caps text-[9px] font-bold tracking-wider mt-0.5">Panchang</span>
+        </a>
+
+        {/* Admin Tab link */}
+        <a 
+          className={`flex flex-col items-center justify-center px-4 py-1.5 transition-all duration-200 scale-90 ${activeTab === 'admin' ? 'bg-amber-600 text-white rounded-full' : 'text-on-surface-variant'}`}
+          href="#admin"
+          onClick={(e) => { e.preventDefault(); setActiveTab('admin'); }}
+        >
+          <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: activeTab === 'admin' ? "'FILL' 1" : "" }}>shield</span>
+          <span className="font-label-caps text-[9px] font-bold tracking-wider mt-0.5">Admin</span>
         </a>
 
       </nav>
